@@ -24,6 +24,7 @@ class User extends Authenticatable
         'password',
         'no_hp',
         'alamat',
+        'provinsi',
         'umur',
         'jenis_kelamin',
         'kendaraan',
