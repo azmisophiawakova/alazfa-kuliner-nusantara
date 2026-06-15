@@ -21,5 +21,4 @@ Aplikasi yang akan dikembangkan adalah Alazfa Kuliner Nusantara, yaitu sebuah ap
 2. Informasi Penjual, Menu, dan Resep
 3. Pemesanan
 4. Pembayaran
-5. Riwayat
-6. Promo dan Voucher
+5. Pelacakan Pesanan
