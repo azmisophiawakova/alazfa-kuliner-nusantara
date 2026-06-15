@@ -4,16 +4,19 @@ namespace App\Http\Controllers\Kurir;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Order;
+use App\Models\{Order, Notification};
 use Illuminate\Support\Facades\Auth;
 
 class DeliveryController extends Controller
 {
     public function index(Request $request)
     {
-        // Lihat daftar pesanan yang butuh kurir (status = diproses & kurir kosong)
-        $available_orders = Order::where('status_pesanan', 'diproses')
+        // Lihat daftar pesanan yang butuh kurir dan tokonya berada di provinsi yang sama dengan kurir
+        $available_orders = Order::whereIn('status_pesanan', ['diproses', 'dikirim'])
                                  ->whereNull('id_kurir')
+                                 ->whereHas('store', function($query) {
+                                     $query->where('provinsi', Auth::user()->provinsi);
+                                 })
                                  ->with(['store', 'user'])
                                  ->get();
         
@@ -29,10 +32,16 @@ class DeliveryController extends Controller
 
     public function accept(Request $request, $id)
     {
-        $order = Order::where('status_pesanan', 'diproses')->whereNull('id_kurir')->findOrFail($id);
+        $order = Order::whereIn('status_pesanan', ['diproses', 'dikirim'])->whereNull('id_kurir')->findOrFail($id);
         $order->update([
             'id_kurir' => Auth::id(),
             'status_pesanan' => 'diambil'
+        ]);
+
+        Notification::create([
+            'id_user' => $order->id_user,
+            'judul' => 'Pesanan Diambil Kurir',
+            'pesan' => 'Kurir ' . Auth::user()->name . ' telah mengambil pesanan Anda dan akan segera mengantarkannya.'
         ]);
 
         if ($request->wantsJson()) return response()->json(['message' => 'Tugas diterima', 'order' => $order]);
@@ -57,6 +66,12 @@ class DeliveryController extends Controller
         $order = Order::where('id_kurir', Auth::id())->findOrFail($id);
         $request->validate(['status_pesanan' => 'required|in:dikirim,selesai']);
         $order->update(['status_pesanan' => $request->status_pesanan]);
+
+        Notification::create([
+            'id_user' => $order->id_user,
+            'judul' => 'Status Pengantaran',
+            'pesan' => 'Pesanan Anda sekarang berstatus: ' . strtoupper($request->status_pesanan)
+        ]);
 
         if ($request->wantsJson()) return response()->json(['message' => 'Status pengiriman diperbarui']);
         return redirect()->back()->with('success', 'Status pengiriman diperbarui');
