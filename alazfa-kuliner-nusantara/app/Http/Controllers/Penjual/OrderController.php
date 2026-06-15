@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Penjual;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Order;
+use App\Models\{Order, Notification};
 use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
@@ -33,8 +33,32 @@ class OrderController extends Controller
         $request->validate(['status_pesanan' => 'required|in:menunggu,diproses,dikirim,selesai,dibatalkan']);
         $order->update(['status_pesanan' => $request->status_pesanan]);
 
+        Notification::create([
+            'id_user' => $order->id_user,
+            'judul' => 'Status Pesanan Diperbarui',
+            'pesan' => 'Pesanan Anda dari ' . $this->getStore()->nama_toko . ' sekarang berstatus: ' . strtoupper($request->status_pesanan)
+        ]);
+
         if ($request->wantsJson()) return response()->json(['message' => 'Status pesanan diperbarui', 'order' => $order]);
         return redirect()->back()->with('success', 'Status pesanan diperbarui');
+    }
+
+    public function verifyPayment(Request $request, $id)
+    {
+        $order = Order::where('id_toko', $this->getStore()->id_toko)->with(['payment', 'user'])->findOrFail($id);
+        $request->validate(['status_pembayaran' => 'required|in:berhasil,gagal']);
+        
+        $order->payment->update([
+            'status_pembayaran' => $request->status_pembayaran
+        ]);
+
+        Notification::create([
+            'id_user' => $order->id_user,
+            'judul' => 'Verifikasi Pembayaran',
+            'pesan' => 'Pembayaran Anda untuk pesanan #' . $order->id_pesanan . ' telah ' . strtoupper($request->status_pembayaran) . ' oleh penjual.'
+        ]);
+
+        return redirect()->back()->with('success', 'Status pembayaran berhasil diverifikasi');
     }
 
     public function printReceipt(Request $request, $id)
