@@ -19,23 +19,29 @@ class ProductController extends Controller
         $store = $this->getStore();
         if (!$store) return response()->json(['message' => 'Toko tidak ditemukan'], 404);
 
+        if ($store->status_verifikasi !== 'disetujui') {
+            return redirect()->route('penjual.dashboard')->with('warning', 'Akun toko Anda belum disetujui oleh Admin. Anda belum bisa mengelola menu.');
+        }
+
         $products = Product::where('id_toko', $store->id_toko)->with('category')->get();
+        $categories = \App\Models\Category::all();
         if ($request->wantsJson()) return response()->json($products);
-        return view('penjual.products.index', compact('products'));
+        return view('penjual.products.index', compact('products', 'categories'));
     }
 
     public function store(Request $request)
     {
         $store = $this->getStore();
         if (!$store) return response()->json(['message' => 'Toko tidak ditemukan'], 404);
+        if ($store->status_verifikasi !== 'disetujui') return abort(403, 'Toko belum disetujui.');
 
         $request->validate([
             'id_kategori' => 'required|exists:categories,id_kategori',
             'nama_produk' => 'required|string',
             'deskripsi_produk' => 'nullable|string',
             'resep' => 'nullable|string',
-            'harga' => 'required|numeric',
-            'stok' => 'required|integer',
+            'harga' => 'required|numeric|min:0|max:99999999',
+            'stok' => 'required|integer|min:0|max:999999',
             'foto_produk' => 'nullable|image|max:2048'
         ]);
 
@@ -60,8 +66,8 @@ class ProductController extends Controller
             'nama_produk' => 'required|string',
             'deskripsi_produk' => 'nullable|string',
             'resep' => 'nullable|string',
-            'harga' => 'required|numeric',
-            'stok' => 'required|integer',
+            'harga' => 'required|numeric|min:0|max:99999999',
+            'stok' => 'required|integer|min:0|max:999999',
             'foto_produk' => 'nullable|image|max:2048'
         ]);
 

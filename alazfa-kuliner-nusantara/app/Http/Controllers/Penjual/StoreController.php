@@ -16,12 +16,19 @@ class StoreController extends Controller
         return view('penjual.store.index', compact('store'));
     }
 
+    public function edit(Request $request)
+    {
+        $store = Auth::user()->stores()->first();
+        return view('penjual.store.edit', compact('store'));
+    }
+
     public function update(Request $request)
     {
         $store = Auth::user()->stores()->first();
         $request->validate([
             'nama_toko' => 'required|string',
             'alamat_toko' => 'required|string',
+            'provinsi' => 'required|string',
             'jam_buka' => 'nullable|string',
             'jam_tutup' => 'nullable|string',
             'deskripsi_toko' => 'nullable|string'

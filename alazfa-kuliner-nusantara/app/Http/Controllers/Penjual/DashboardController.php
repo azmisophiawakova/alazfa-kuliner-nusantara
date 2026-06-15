@@ -13,8 +13,7 @@ class DashboardController extends Controller
     {
         $store = Auth::user()->stores()->first();
         if (!$store) {
-            if ($request->wantsJson()) return response()->json(['message' => 'Anda belum memiliki toko'], 404);
-            return redirect()->route('penjual.store.index')->with('warning', 'Silakan lengkapi data toko Anda terlebih dahulu');
+            return redirect()->route('penjual.store.index')->with('warning', 'Silakan lengkapi profil toko Anda terlebih dahulu.');
         }
 
         $data = [
