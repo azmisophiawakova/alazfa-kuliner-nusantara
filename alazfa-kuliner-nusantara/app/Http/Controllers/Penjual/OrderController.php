@@ -31,7 +31,29 @@ class OrderController extends Controller
     {
         $order = Order::where('id_toko', $this->getStore()->id_toko)->findOrFail($id);
         $request->validate(['status_pesanan' => 'required|in:menunggu,diproses,dikirim,selesai,dibatalkan']);
-        $order->update(['status_pesanan' => $request->status_pesanan]);
+        
+        // Cek jika status berubah jadi selesai untuk pertama kalinya
+        if ($request->status_pesanan == 'selesai' && $order->status_pesanan != 'selesai') {
+            \Illuminate\Support\Facades\DB::transaction(function () use ($order, $request) {
+                // 1. Tambah saldo penjual
+                $penjual = Auth::user();
+                $penjual->saldo += $order->total_harga;
+                $penjual->save();
+
+                // 2. Tambah saldo kurir (jika ada)
+                if ($order->id_kurir) {
+                    $kurir = \App\Models\User::find($order->id_kurir);
+                    if ($kurir) {
+                        $kurir->saldo += $order->ongkos_kirim;
+                        $kurir->save();
+                    }
+                }
+
+                $order->update(['status_pesanan' => 'selesai']);
+            });
+        } else {
+            $order->update(['status_pesanan' => $request->status_pesanan]);
+        }
 
         Notification::create([
             'id_user' => $order->id_user,

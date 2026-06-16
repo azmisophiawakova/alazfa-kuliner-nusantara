@@ -29,6 +29,7 @@ class StoreController extends Controller
             'nama_toko' => 'required|string',
             'alamat_toko' => 'required|string',
             'provinsi' => 'required|string',
+            'kota' => 'required|string',
             'jam_buka' => 'nullable|string',
             'jam_tutup' => 'nullable|string',
             'deskripsi_toko' => 'nullable|string'
@@ -41,6 +42,18 @@ class StoreController extends Controller
             $data['id_user'] = Auth::id();
             $data['status_verifikasi'] = 'menunggu konfirmasi';
             $store = Store::create($data);
+
+            // Kirim Notifikasi ke semua admin
+            $admins = \App\Models\User::where('role', 'admin')->get();
+            foreach ($admins as $admin) {
+                \App\Models\Notification::create([
+                    'id_user' => $admin->id,
+                    'judul' => 'Toko Baru Mendaftar',
+                    'pesan' => 'Toko "' . $store->nama_toko . '" baru saja mendaftar dan menunggu verifikasi Anda.',
+                    'status_baca' => false,
+                    'tanggal_kirim' => now()
+                ]);
+            }
         }
 
         if ($request->wantsJson()) return response()->json(['message' => 'Profil toko diperbarui', 'store' => $store]);
