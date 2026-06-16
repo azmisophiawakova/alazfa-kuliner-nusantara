@@ -27,27 +27,35 @@
                     @error('alamat_toko') <div class="invalid-feedback">{{ $message }}</div> @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label fw-bold">Provinsi <span class="text-danger">*</span></label>
-                    <select name="provinsi" class="form-select rounded-3 @error('provinsi') is-invalid @enderror" required>
-                        <option value="" disabled {{ old('provinsi', $store->provinsi ?? '') == '' ? 'selected' : '' }}>Pilih Provinsi Lokasi Toko</option>
-                        @php
-                            $provinsis = [
-                                'Aceh', 'Sumatera Utara', 'Sumatera Barat', 'Riau', 'Jambi', 'Sumatera Selatan', 'Bengkulu', 'Lampung', 'Kepulauan Bangka Belitung', 'Kepulauan Riau',
-                                'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'DI Yogyakarta', 'Jawa Timur', 'Banten',
-                                'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur',
-                                'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Selatan', 'Kalimantan Timur', 'Kalimantan Utara',
-                                'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Selatan', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
-                                'Maluku', 'Maluku Utara',
-                                'Papua', 'Papua Barat', 'Papua Selatan', 'Papua Tengah', 'Papua Pegunungan', 'Papua Barat Daya'
-                            ];
-                        @endphp
-                        @foreach($provinsis as $prov)
-                            <option value="{{ $prov }}" {{ old('provinsi', $store->provinsi ?? '') == $prov ? 'selected' : '' }}>{{ $prov }}</option>
-                        @endforeach
-                    </select>
-                    <div class="form-text small">Lokasi provinsi penting agar kurir di daerah yang sama dapat mengambil pesanan Anda.</div>
-                    @error('provinsi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label fw-bold">Provinsi <span class="text-danger">*</span></label>
+                        <select name="provinsi" class="form-select rounded-3 @error('provinsi') is-invalid @enderror" required>
+                            <option value="" disabled {{ old('provinsi', $store->provinsi ?? '') == '' ? 'selected' : '' }}>Pilih Provinsi Lokasi Toko</option>
+                            @php
+                                $provinsis = [
+                                    'Aceh', 'Sumatera Utara', 'Sumatera Barat', 'Riau', 'Jambi', 'Sumatera Selatan', 'Bengkulu', 'Lampung', 'Kepulauan Bangka Belitung', 'Kepulauan Riau',
+                                    'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah', 'DI Yogyakarta', 'Jawa Timur', 'Banten',
+                                    'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur',
+                                    'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Selatan', 'Kalimantan Timur', 'Kalimantan Utara',
+                                    'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Selatan', 'Sulawesi Tenggara', 'Gorontalo', 'Sulawesi Barat',
+                                    'Maluku', 'Maluku Utara',
+                                    'Papua', 'Papua Barat', 'Papua Selatan', 'Papua Tengah', 'Papua Pegunungan', 'Papua Barat Daya'
+                                ];
+                            @endphp
+                            @foreach($provinsis as $prov)
+                                <option value="{{ $prov }}" {{ old('provinsi', $store->provinsi ?? '') == $prov ? 'selected' : '' }}>{{ $prov }}</option>
+                            @endforeach
+                        </select>
+                        <div class="form-text small">Lokasi provinsi penting agar kurir di daerah yang sama dapat mengambil pesanan Anda.</div>
+                        @error('provinsi') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Kota/Kabupaten <span class="text-danger">*</span></label>
+                        <input type="text" name="kota" class="form-control rounded-3 @error('kota') is-invalid @enderror" value="{{ old('kota', $store->kota ?? '') }}" required placeholder="Contoh: Bandung">
+                        <div class="form-text small">Ketik nama kota lokasi toko secara persis.</div>
+                        @error('kota') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
                 </div>
 
                 <div class="mb-4">
