@@ -23,16 +23,29 @@
     <div class="row g-4 mb-5">
         <!-- Main Bento Box -->
         <div class="col-lg-12">
-            <div class="bento-box text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, var(--dark) 0%, #3a3a3a 100%);">
-                <div class="position-absolute rounded-circle" style="width: 300px; height: 300px; background: rgba(255,255,255,0.05); top: -100px; right: -50px;"></div>
-                
-                <div class="position-relative z-1 d-flex justify-content-between align-items-center">
-                    <div>
-                        <span class="badge bg-secondary text-dark px-3 py-2 rounded-pill mb-3 shadow-sm">Ujung Tombak Layanan</span>
-                        <h5 class="fw-light mb-1">Semangat Bertugas,</h5>
-                        <h1 class="brand-font fw-bolder mb-2" style="font-size: 2.5rem;">{{ Auth::user()->name }}</h1>
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="bento-box text-white position-relative overflow-hidden h-100" style="background: linear-gradient(135deg, var(--dark) 0%, #3a3a3a 100%);">
+                        <div class="position-absolute rounded-circle" style="width: 300px; height: 300px; background: rgba(255,255,255,0.05); top: -100px; right: -50px;"></div>
+                        
+                        <div class="position-relative z-1 d-flex justify-content-between align-items-center h-100">
+                            <div>
+                                <span class="badge bg-secondary text-dark px-3 py-2 rounded-pill mb-3 shadow-sm">Ujung Tombak Layanan</span>
+                                <h5 class="fw-light mb-1">Semangat Bertugas,</h5>
+                                <h1 class="brand-font fw-bolder mb-2" style="font-size: 2.5rem;">{{ Auth::user()->name }}</h1>
+                            </div>
+                            <i class="bi bi-person-badge opacity-25" style="font-size: 6rem;"></i>
+                        </div>
                     </div>
-                    <i class="bi bi-person-badge opacity-25" style="font-size: 6rem;"></i>
+                </div>
+                <div class="col-md-4">
+                    <div class="bento-box text-white position-relative overflow-hidden h-100" style="background: linear-gradient(135deg, #2d5a27 0%, #1e3c1a 100%);">
+                        <div class="position-relative z-1 d-flex flex-column justify-content-center h-100 p-2">
+                            <h5 class="fw-light mb-1 text-white-50">Saldo Dompet</h5>
+                            <h1 class="brand-font fw-bolder mb-3" style="font-size: 2rem;">Rp {{ number_format(Auth::user()->saldo, 0, ',', '.') }}</h1>
+                            <a href="/kurir/withdraw" class="btn btn-light rounded-pill px-4 fw-bold">Tarik Dana</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

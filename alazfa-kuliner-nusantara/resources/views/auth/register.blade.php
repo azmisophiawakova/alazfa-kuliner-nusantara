@@ -37,9 +37,18 @@
 
             <!-- Alamat -->
             <div class="mb-3">
-                <label for="alamat" class="form-label fw-medium">Alamat Lengkap</label>
-                <textarea id="alamat" class="form-control rounded-3 @error('alamat') is-invalid @enderror" name="alamat" rows="2" placeholder="Nama jalan, RT/RW, kelurahan...">{{ old('alamat') }}</textarea>
+                <label for="alamat" class="form-label fw-medium">Alamat Lengkap (Beserta Kecamatan & Kode Pos)</label>
+                <textarea id="alamat" class="form-control rounded-3 @error('alamat') is-invalid @enderror" name="alamat" rows="2" placeholder="Nama jalan, RT/RW, kecamatan..." required>{{ old('alamat') }}</textarea>
                 @error('alamat')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <!-- Kota / Kabupaten -->
+            <div class="mb-3">
+                <label for="kota" class="form-label fw-medium">Kota / Kabupaten</label>
+                <input id="kota" type="text" class="form-control rounded-3 @error('kota') is-invalid @enderror" name="kota" value="{{ old('kota') }}" placeholder="Contoh: Kota Bandung" required>
+                @error('kota')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>

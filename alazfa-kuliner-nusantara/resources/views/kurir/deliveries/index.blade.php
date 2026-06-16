@@ -74,13 +74,19 @@
                                         <span class="badge bg-primary rounded-pill px-3 py-2">Di Perjalanan</span>
                                     </td>
                                     <td class="py-3 px-4 text-end">
-                                        <form method="POST" action="{{ route('kurir.deliveries.status', $o->id_pesanan) }}" class="d-flex justify-content-end gap-2">
+                                        <form method="POST" action="{{ route('kurir.deliveries.status', $o->id_pesanan) }}" enctype="multipart/form-data" class="d-flex flex-column align-items-end gap-2">
                                             @csrf
-                                            <select name="status_pesanan" class="form-select form-select-sm rounded-3" style="width: 140px;">
-                                                <option value="dikirim" selected>Sedang Dikirim</option>
-                                                <option value="selesai">Selesai / Sampai</option>
-                                            </select>
-                                            <button type="submit" class="btn btn-dark btn-sm rounded-3 px-3">Update</button>
+                                            <div class="d-flex justify-content-end gap-2 w-100">
+                                                <select name="status_pesanan" class="form-select form-select-sm rounded-3 status-select" style="width: 140px;" data-id="{{ $o->id_pesanan }}">
+                                                    <option value="dikirim" selected>Sedang Dikirim</option>
+                                                    <option value="selesai">Selesai / Sampai</option>
+                                                </select>
+                                                <button type="submit" class="btn btn-dark btn-sm rounded-3 px-3">Update</button>
+                                            </div>
+                                            <div class="file-upload-container d-none w-100" id="upload-{{ $o->id_pesanan }}">
+                                                <input type="file" name="foto_bukti_pengantaran" class="form-control form-control-sm" accept="image/*">
+                                                <small class="text-muted" style="font-size: 0.7rem;">Wajib foto bukti jika selesai</small>
+                                            </div>
                                         </form>
                                     </td>
                                 </tr>
@@ -97,4 +103,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.status-select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                const id = this.getAttribute('data-id');
+                const uploadContainer = document.getElementById('upload-' + id);
+                if (this.value === 'selesai') {
+                    uploadContainer.classList.remove('d-none');
+                    uploadContainer.querySelector('input').setAttribute('required', 'required');
+                } else {
+                    uploadContainer.classList.add('d-none');
+                    uploadContainer.querySelector('input').removeAttribute('required');
+                }
+            });
+        });
+    });
+</script>
 @endsection
