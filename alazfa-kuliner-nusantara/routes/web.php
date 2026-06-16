@@ -8,9 +8,12 @@ use Illuminate\Support\Facades\Route;
 // ==========================================
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/penjual', [\App\Http\Controllers\HomeController::class, 'sellers'])->name('sellers.index');
+Route::get('/toko/{id}', [\App\Http\Controllers\HomeController::class, 'showSeller'])->name('sellers.show');
 
 Route::get('/menu', [\App\Http\Controllers\ProductController::class, 'index'])->name('menu.index');
 Route::get('/menu/search', [\App\Http\Controllers\ProductController::class, 'search'])->name('menu.search');
+Route::get('/menu/diskon', [\App\Http\Controllers\ProductController::class, 'diskon'])->name('menu.diskon');
+Route::get('/menu/populer', [\App\Http\Controllers\ProductController::class, 'populer'])->name('menu.populer');
 Route::get('/menu/{id}', [\App\Http\Controllers\ProductController::class, 'show'])->name('menu.show');
 
 
@@ -21,6 +24,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Notifikasi (Semua Role)
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+
+    // Laporan Umum (Bisa diakses Pelanggan, Penjual, Kurir)
+    Route::post('/reports', [\App\Http\Controllers\ReportController::class, 'store'])->name('reports.store');
 });
 
 
@@ -53,6 +63,7 @@ Route::middleware(['auth', 'role:pelanggan'])->group(function () {
     Route::get('/orders', [\App\Http\Controllers\OrderController::class, 'index'])->name('orders.index');
     Route::post('/orders', [\App\Http\Controllers\OrderController::class, 'store'])->name('orders.store');
     Route::get('/orders/{id}', [\App\Http\Controllers\OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/payment', [\App\Http\Controllers\OrderController::class, 'uploadPayment'])->name('orders.payment');
 
     // Favorit
     Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites.index');
@@ -62,9 +73,7 @@ Route::middleware(['auth', 'role:pelanggan'])->group(function () {
     // Ulasan
     Route::post('/reviews', [\App\Http\Controllers\ReviewController::class, 'store'])->name('reviews.store');
 
-    // Notifikasi
-    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+
 });
 
 
@@ -81,12 +90,17 @@ Route::middleware(['auth', 'role:penjual'])->prefix('penjual')->name('penjual.')
     Route::get('/orders', [\App\Http\Controllers\Penjual\OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{id}', [\App\Http\Controllers\Penjual\OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{id}/status', [\App\Http\Controllers\Penjual\OrderController::class, 'updateStatus'])->name('orders.status');
+    Route::post('/orders/{id}/payment', [\App\Http\Controllers\Penjual\OrderController::class, 'verifyPayment'])->name('orders.payment');
     Route::get('/orders/{id}/receipt', [\App\Http\Controllers\Penjual\OrderController::class, 'printReceipt'])->name('orders.receipt');
 
     // Profil Toko
     Route::get('/store', [\App\Http\Controllers\Penjual\StoreController::class, 'index'])->name('store.index');
     Route::get('/store/edit', [\App\Http\Controllers\Penjual\StoreController::class, 'edit'])->name('store.edit');
     Route::put('/store', [\App\Http\Controllers\Penjual\StoreController::class, 'update'])->name('store.update');
+
+    // Wallet / Saldo
+    Route::get('/withdraw', [\App\Http\Controllers\WalletController::class, 'withdrawForm'])->name('withdraw');
+    Route::post('/withdraw', [\App\Http\Controllers\WalletController::class, 'storeWithdraw'])->name('withdraw.store');
 
     // Laporan
     Route::get('/reports', [\App\Http\Controllers\Penjual\ReportController::class, 'index'])->name('reports.index');
@@ -105,6 +119,10 @@ Route::middleware(['auth', 'role:kurir'])->prefix('kurir')->name('kurir.')->grou
     Route::post('/deliveries/{id}/reject', [\App\Http\Controllers\Kurir\DeliveryController::class, 'reject'])->name('deliveries.reject');
     Route::post('/deliveries/{id}/status', [\App\Http\Controllers\Kurir\DeliveryController::class, 'updateStatus'])->name('deliveries.status');
     Route::get('/deliveries/history', [\App\Http\Controllers\Kurir\DeliveryController::class, 'history'])->name('deliveries.history');
+
+    // Wallet / Saldo
+    Route::get('/withdraw', [\App\Http\Controllers\WalletController::class, 'withdrawForm'])->name('withdraw');
+    Route::post('/withdraw', [\App\Http\Controllers\WalletController::class, 'storeWithdraw'])->name('withdraw.store');
 });
 
 
@@ -139,6 +157,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::get('/reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/{id}/resolve', [\App\Http\Controllers\Admin\ReportController::class, 'resolve'])->name('reports.resolve');
+
+    // Laporan Sistem
+    Route::get('/system-reports', [\App\Http\Controllers\Admin\SystemReportController::class, 'index'])->name('system-reports.index');
+
+    // Pengaturan
+    Route::post('/settings/qris', [\App\Http\Controllers\Admin\DashboardController::class, 'updateQris'])->name('settings.qris');
+
+    // Penarikan Dana
+    Route::get('/withdrawals', [\App\Http\Controllers\Admin\WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::post('/withdrawals/{id}/status', [\App\Http\Controllers\Admin\WithdrawalController::class, 'update'])->name('withdrawals.update');
 });
 
 require __DIR__.'/auth.php';
