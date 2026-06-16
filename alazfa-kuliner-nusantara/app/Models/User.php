@@ -25,6 +25,8 @@ class User extends Authenticatable
         'no_hp',
         'alamat',
         'provinsi',
+        'kota',
+        'saldo',
         'umur',
         'jenis_kelamin',
         'kendaraan',
@@ -66,4 +68,5 @@ class User extends Authenticatable
     public function deliveries() { return $this->hasMany(Order::class, 'id_kurir'); }
     public function verifications() { return $this->hasMany(Verification::class, 'id_user'); }
     public function monitorings() { return $this->hasMany(Monitoring::class, 'id_user'); }
+    public function withdrawals() { return $this->hasMany(Withdrawal::class, 'id_user'); }
 }

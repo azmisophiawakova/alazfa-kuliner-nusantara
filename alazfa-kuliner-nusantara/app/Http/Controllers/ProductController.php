@@ -21,6 +21,12 @@ class ProductController extends Controller
             });
         }
 
+        if ($request->has('kota') && $request->kota != '') {
+            $query->whereHas('store', function($q) use ($request) {
+                $q->where('kota', 'LIKE', "%{$request->kota}%");
+            });
+        }
+
         $products = $query->paginate(12);
         
         $page_title = 'Katalog Menu';

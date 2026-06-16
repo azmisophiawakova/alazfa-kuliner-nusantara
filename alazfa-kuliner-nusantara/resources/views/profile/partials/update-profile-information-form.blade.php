@@ -40,6 +40,18 @@
             @error('provinsi')<div class="invalid-feedback">{{ $message }}</div>@enderror
         </div>
 
+        <div class="mb-3">
+            <label for="kota" class="form-label fw-semibold">Kota / Kabupaten</label>
+            <input id="kota" name="kota" type="text" class="form-control rounded-3 p-2 border-2 @error('kota') is-invalid @enderror" value="{{ old('kota', $user->kota) }}" placeholder="Contoh: Kota Bandung" required>
+            @error('kota')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="alamat" class="form-label fw-semibold">Alamat Lengkap (Beserta Kecamatan & Kode Pos)</label>
+            <textarea id="alamat" name="alamat" class="form-control rounded-3 p-2 border-2 @error('alamat') is-invalid @enderror" rows="3" placeholder="Nama jalan, RT/RW, kecamatan..." required>{{ old('alamat', $user->alamat) }}</textarea>
+            @error('alamat')<div class="invalid-feedback">{{ $message }}</div>@enderror
+        </div>
+
         <div class="mb-4">
             <label for="email" class="form-label fw-semibold">Alamat Email</label>
             <input id="email" name="email" type="email" class="form-control rounded-3 p-2 border-2 @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required autocomplete="username">

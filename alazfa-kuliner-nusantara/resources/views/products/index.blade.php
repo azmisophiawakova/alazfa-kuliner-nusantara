@@ -16,7 +16,7 @@
 
     <!-- Filter Bar -->
     <div class="mb-5 bg-white p-3 rounded-pill shadow-sm border">
-        <form method="GET" action="{{ route('menu.index') }}" class="d-flex gap-2">
+        <form method="GET" action="{{ route('menu.index') }}" class="d-flex flex-column flex-md-row gap-2 w-100">
             <select name="provinsi" class="form-select rounded-pill border-0 bg-light px-4" onchange="this.form.submit()">
                 <option value="">Semua Daerah Nusantara</option>
                 @php
@@ -34,8 +34,14 @@
                     <option value="{{ $prov }}" {{ request('provinsi') == $prov ? 'selected' : '' }}>Khasiat {{ $prov }}</option>
                 @endforeach
             </select>
-            @if(request('provinsi'))
-                <a href="{{ route('menu.index') }}" class="btn btn-outline-danger rounded-pill px-4"><i class="bi bi-x-lg"></i></a>
+            
+            <div class="input-group">
+                <input type="text" name="kota" class="form-control rounded-start-pill border-0 bg-light px-4" placeholder="Ketik nama Kota/Kabupaten..." value="{{ request('kota') }}">
+                <button type="submit" class="btn btn-dark rounded-end-pill px-4">Cari</button>
+            </div>
+
+            @if(request('provinsi') || request('kota'))
+                <a href="{{ route('menu.index') }}" class="btn btn-outline-danger rounded-pill px-4" data-bs-toggle="tooltip" title="Reset Filter"><i class="bi bi-x-lg"></i></a>
             @endif
         </form>
     </div>

@@ -73,7 +73,13 @@
                 <div class="col-xl-4 col-md-6">
                     <div class="premium-card h-100 d-flex flex-column">
                         <div class="position-relative" style="height: 220px;">
-                            <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="{{ $p->nama_produk }}" class="w-100 h-100 object-fit-cover">
+                            @if($p->foto_produk)
+                                <img src="{{ asset('storage/'.$p->foto_produk) }}" alt="{{ $p->nama_produk }}" class="w-100 h-100 object-fit-cover">
+                            @else
+                                <div class="w-100 h-100 bg-light d-flex justify-content-center align-items-center">
+                                    <i class="bi bi-image display-1 text-muted opacity-25"></i>
+                                </div>
+                            @endif
                             
                             <!-- Badges -->
                             <div class="position-absolute top-0 start-0 p-3">
